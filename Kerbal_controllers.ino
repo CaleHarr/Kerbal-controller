@@ -1,5 +1,12 @@
 
-//Source for countdown timer section: https://docs.arduino.cc/tutorials/micro/keyboard-press
+#include "Keyboard.h"
+//Need to use raspberry pi instead of Elegoo uno R3
+//Using older button sketch that doesn't quite work right (potentially, issue might be break at end of countdown function)
+
+//Source for countdown timer section:https://circuitdigest.com/microcontroller-projects/7-segment-display-interfacing-with-arduino
+// Source for button wiring: https://docs.arduino.cc/tutorials/micro/keyboard-press
+//Button code from Arduino Make book, sat on drive
+
 //Pin 9 being used for button, think about wiring up in parallel as running out of grounds
 #define segA 2//connecting segment A to PIN2
 #define segB 3// connecting segment B to PIN3
@@ -10,8 +17,13 @@
 #define segG 8// connecting segment G to PIN8 
                 int COUNT=9;//count integer for 0-9 increment
                 //int COUNT=0;//count integer for 0-9 increment
+const int BUTTON=9; //input pin where button connected
+int val=0; //val stores state of input pin
+int val_store=0;;
 void setup()
 {
+                  pinMode(BUTTON,INPUT);//and BUTTON is an input
+
                   for (int i=2;i<9;i++)
 
                   {
@@ -27,15 +39,34 @@ void setup()
 void loop()
 
 {
+  val=digitalRead(BUTTON);//read imput value and store it
+if (val==HIGH&&val_store==LOW){
+  val_store=HIGH;
+  countdown(COUNT);
+  delay(10);
+ }
+else if (val==LOW&&val_store==HIGH){
+  countdown(COUNT);
+  delay(10);
 
-switch (COUNT)
+ }
+else if (val==HIGH&&val_store==HIGH){
+ val_store=LOW;
+ countdown(COUNT);
+ delay(10);
+ }
+ else if (val==LOW&&val_store==LOW){
+  delay(10);
+ }
+//countdown(COUNT);
+}
+
+
+int countdown(int x){
+                switch ( x)
 
                 {
-
- 
-
                 case 0://when count value is zero show”0” on disp
-
                 digitalWrite(segA, HIGH);
                 digitalWrite(segB, HIGH);
                 digitalWrite(segC, HIGH);
@@ -43,6 +74,7 @@ switch (COUNT)
                 digitalWrite(segE, HIGH);
                 digitalWrite(segF, HIGH);
                 digitalWrite(segG, LOW);
+                Keyboard.release(97);
                 break;
 
  
@@ -248,5 +280,5 @@ switch (COUNT)
                                 //delay(1000);
 
                 }
- 
+                
 }
